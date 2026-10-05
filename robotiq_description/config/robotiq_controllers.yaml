@@ -5,27 +5,61 @@ controller_manager:
       type: joint_state_broadcaster/JointStateBroadcaster
     # Jazzy and newer: parallel_gripper_action_controller replaces gripper_controllers package
     robotiq_gripper_controller:
-      type: parallel_gripper_action_controller/GripperActionController
+      #type: position_controllers/GripperActionController
+      #type: effort_controllers/JointGroupEffortController
+      type: joint_trajectory_controller/JointTrajectoryController
     robotiq_activation_controller:
       type: robotiq_controllers/RobotiqActivationController
 
+## GripperActionController configuration
 robotiq_gripper_controller:
   ros__parameters:
-    joint: robotiq_85_left_knuckle_joint
+    # default: true
+    # joint: finger_joint
+    # use_effort_interface: true
+    # use_speed_interface: true
 
-    # Enable effort control (replacement for use_effort_interface)
-    max_effort_interface: "robotiq_85_left_knuckle_joint/effort"
-    max_effort: 50.0   # TODO tune
+    joints:
+      - finger_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    interpolate_from_desired_state: true
+    constraints:
+      stopped_velocity_tolerance: 0.01
+      goal_time: 0.5
+      finger_joint: 
+        trajectory: 0.05
+        goal: 0.001
 
-    # Enable velocity/speed control (replacement for use_speed_interface)
-    max_velocity_interface: "robotiq_85_left_knuckle_joint/velocity"
-    max_velocity: 0.5    # TODO tune
+## Velocity or Effort controller configuration
+# robotiq_gripper_controller:
+#   ros__parameters:
+#     joints:
+#       - finger_joint
 
-    # Optional (recommended)
-    state_interfaces: ["position", "velocity"]
-    allow_stalling: true
-    stall_timeout: 0.05
-    goal_tolerance: 0.02
+
+# ## Older controller configuration (for position_controllers/GripperActionController)
+# robotiq_gripper_controller:
+#   ros__parameters:
+#     joint: robotiq_85_left_knuckle_joint
+
+#     # Enable effort control (replacement for use_effort_interface)
+#     max_effort_interface: "robotiq_85_left_knuckle_joint/effort"
+#     max_effort: 50.0   # TODO tune
+
+#     # Enable velocity/speed control (replacement for use_speed_interface)
+#     max_velocity_interface: "robotiq_85_left_knuckle_joint/velocity"
+#     max_velocity: 0.5    # TODO tune
+
+#     # Optional (recommended)
+#     state_interfaces: ["position", "velocity"]
+#     allow_stalling: true
+#     stall_timeout: 0.05
+#     goal_tolerance: 0.02
 
 robotiq_activation_controller:
   ros__parameters:

@@ -30,5 +30,7 @@
 
   <export>
     <build_type>ament_cmake</build_type>
+		<!-- This export is needed for Gazebo to find the models, but it is not used by ROS2 itself -->
+		<gazebo_ros gazebo_model_path="${prefix}/../" />
   </export>
 </package>
